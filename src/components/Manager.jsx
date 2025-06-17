@@ -3,44 +3,43 @@ import { useRef, useState, useEffect } from "react";
 
 const Manager = () => {
   const ref = useRef();
-  const [form, setform] = useState({site: "", username: "", password: ""})
-  const [passwordArray, setpasswordArray] = useState([])
-  
+  const [form, setform] = useState({ site: "", username: "", password: "" });
+  const [passwordArray, setpasswordArray] = useState([]);
+
   const showPassword = async () => {
     // ref.current.src = "assets/hide.png"
-    if(ref.current.src.includes("icons/hide.png")){
-      ref.current.src = "icons/eye.png"
-    }else{
-      ref.current.src = "icons/hide.png"
+    if (ref.current.src.includes("icons/hide.png")) {
+      ref.current.src = "icons/eye.png";
+    } else {
+      ref.current.src = "icons/hide.png";
     }
-    
-  }
+  };
 
   useEffect(() => {
-    let passwords = localStorage.getItem("passwords")
-    if(passwords){
-      setpasswordArray(JSON.parse(passwords))
+    let passwords = localStorage.getItem("passwords");
+    if (passwords) {
+      setpasswordArray(JSON.parse(passwords));
     }
-  }, [])
-  
+  }, []);
 
   const savePassword = async () => {
     setpasswordArray([...passwordArray, form]);
     localStorage.setItem("passwords", JSON.stringify([...passwordArray, form]));
     console.log([...passwordArray, form]);
-
-  }
+  };
 
   const handleChange = async (e) => {
-    setform({...form, [e.target.name]: e.target.value})
-  }
+    setform({ ...form, [e.target.name]: e.target.value });
+  };
 
   return (
     <>
       <div className="absolute top-0 z-[-2] h-screen w-screen bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
 
-      <div className="container my-8 mx-auto text-white max-w-3xl">
-        <h1 className="text-center text-2xl">Your Password Manager</h1>
+      <div className="container my-8 mx-auto  max-w-4xl">
+        <h1 className="text-center text-2xl text-white">
+          Your Password Manager
+        </h1>
         <div className=" flex flex-col py-8">
           <input
             value={form.site}
@@ -88,6 +87,40 @@ const Manager = () => {
             </div>
             Add Password
           </button>
+        </div>
+        <div className="passwords">
+          <h2 className="text-2xl font-bold py-3 text-white">Your Passwords</h2>
+          {passwordArray.length === 0 && (
+            <div className="text-blue-400"> No Saved Passwords :(</div>
+          )}
+          {passwordArray.length != 0 && (
+            <table className="table-auto w-full rounded-xl overflow-hidden">
+              <thead className="bg-blue-400">
+                <tr>
+                  <th className="py-2">Website</th>
+                  <th className="py-2">Username</th>
+                  <th className="py-2">Password</th>
+                </tr>
+              </thead>
+              <tbody className="text-black bg-white">
+                {passwordArray.map((item, index) => {
+                  return (
+                    <tr key={index}>
+                      <td className="text-center w-32 border border-slate-100 py-2">
+                        <a href={item.site} target="_blank">{item.site}</a>
+                      </td>
+                      <td className="text-center w-32 border border-slate-100 py-2">
+                        {item.username}
+                      </td>
+                      <td className="text-center w-32 border border-slate-100 py-2">
+                        {item.password}
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
         </div>
       </div>
     </>
