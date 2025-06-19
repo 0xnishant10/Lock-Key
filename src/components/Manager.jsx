@@ -3,14 +3,17 @@ import { useRef, useState, useEffect } from "react";
 
 const Manager = () => {
   const ref = useRef();
+  const passwordRef = useRef();
   const [form, setform] = useState({ site: "", username: "", password: "" });
   const [passwordArray, setpasswordArray] = useState([]);
 
   const showPassword = async () => {
     // ref.current.src = "assets/hide.png"
     if (ref.current.src.includes("icons/hide.png")) {
+      passwordRef.current.type="password"
       ref.current.src = "icons/eye.png";
     } else {
+      passwordRef.current.type = "text";
       ref.current.src = "icons/hide.png";
     }
   };
@@ -59,11 +62,12 @@ const Manager = () => {
               name="username"
             />
             <input
+              ref={passwordRef}
               value={form.password}
               onChange={handleChange}
               className=" text-white hover:bg-white hover:text-blue-950 px-2 py-0.5 text-sm rounded-full w-full border border-white"
               placeholder="Password"
-              type="text"
+              type="password"
               name="password"
             />
             <img
