@@ -1,5 +1,6 @@
 import React from "react";
 import { useRef, useState, useEffect } from "react";
+import { ToastContainer, toast } from "react-toastify";
 
 const Manager = () => {
   const ref = useRef();
@@ -10,7 +11,7 @@ const Manager = () => {
   const showPassword = async () => {
     // ref.current.src = "assets/hide.png"
     if (ref.current.src.includes("icons/hide.png")) {
-      passwordRef.current.type="password"
+      passwordRef.current.type = "password";
       ref.current.src = "icons/eye.png";
     } else {
       passwordRef.current.type = "text";
@@ -35,8 +36,34 @@ const Manager = () => {
     setform({ ...form, [e.target.name]: e.target.value });
   };
 
+  const copyText = (text) => {
+    toast("🦄 Copied to Clipboard!", {
+      position: "top-right",
+      autoClose: 2000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
+    navigator.clipboard.writeText(text);
+  }
+
   return (
     <>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
       <div className="absolute top-0 z-[-2] h-screen w-screen bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
 
       <div className="container my-8 mx-auto  max-w-4xl">
@@ -80,7 +107,7 @@ const Manager = () => {
           </div>
           <button
             onClick={savePassword}
-            className="bg-blue-400 text-sm border hover:border-white hover:animate-bounce cursor-pointer text-black w-fit mx-auto  py-1 px-2 rounded-xl flex gap-1 items-center"
+            className="bg-blue-400 text-sm border hover:border-white cursor-pointer text-black w-fit mx-auto  py-1 px-2 rounded-xl flex gap-1 items-center"
           >
             <div>
               <lord-icon
@@ -110,13 +137,25 @@ const Manager = () => {
                 {passwordArray.map((item, index) => {
                   return (
                     <tr key={index}>
-                      <td className="text-center w-32 border border-slate-100 py-2">
-                        <a href={item.site} target="_blank">{item.site}</a>
+                      <td className=" cursor-pointer hover:bg-blue-200 text-center w-32 border border-slate-100 py-2">
+                        <a href={item.site} target="_blank">
+                          {item.site}
+                        </a>
                       </td>
-                      <td className="text-center w-32 border border-slate-100 py-2">
+                      <td
+                        className="cursor-pointer hover:bg-blue-200 text-center w-32 border border-slate-100 py-2"
+                        onClick={() => {
+                          copyText(item.username);
+                        }}
+                      >
                         {item.username}
                       </td>
-                      <td className="text-center w-32 border border-slate-100 py-2">
+                      <td
+                        className="cursor-pointer hover:bg-blue-200 text-center w-32 border border-slate-100 py-2"
+                        onClick={() => {
+                          copyText(item.password);
+                        }}
+                      >
                         {item.password}
                       </td>
                     </tr>
