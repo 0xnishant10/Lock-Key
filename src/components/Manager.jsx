@@ -1,6 +1,7 @@
 import React from "react";
 import { useRef, useState, useEffect } from "react";
 import { ToastContainer, toast } from "react-toastify";
+import { v4 as uuidv4 } from "uuid";
 
 const Manager = () => {
   const ref = useRef();
@@ -27,9 +28,29 @@ const Manager = () => {
   }, []);
 
   const savePassword = async () => {
-    setpasswordArray([...passwordArray, form]);
-    localStorage.setItem("passwords", JSON.stringify([...passwordArray, form]));
+    setpasswordArray([...passwordArray, {...form, id: uuidv4()}]);
+    localStorage.setItem(
+      "passwords",
+      JSON.stringify([...passwordArray, { ...form, id: uuidv4() }])
+    );
     console.log([...passwordArray, form]);
+    setform({ site: "", username: "", password: "" });
+  };
+
+  const deletePassword = async (id) => {
+    let c = confirm("Do you want to delete this password?")
+    if(c){
+      setpasswordArray(passwordArray.filter((item) => item.id !== id));
+      localStorage.setItem(
+        "passwords",
+        JSON.stringify(passwordArray.filter((item) => item.id !== id))
+      );
+    }
+  };
+
+  const editPassword = async (id) => {
+    setform(passwordArray.filter(item=> item.id === id)[0])
+    setpasswordArray(passwordArray.filter((item) => item.id !== id));
   };
 
   const handleChange = async (e) => {
@@ -48,7 +69,7 @@ const Manager = () => {
       theme: "dark",
     });
     navigator.clipboard.writeText(text);
-  }
+  };
 
   return (
     <>
@@ -107,7 +128,7 @@ const Manager = () => {
           </div>
           <button
             onClick={savePassword}
-            className="bg-blue-400 text-sm border hover:border-white cursor-pointer text-black w-fit mx-auto  py-1 px-2 rounded-xl flex gap-1 items-center"
+            className="bg-blue-400  text-sm border hover:border-white cursor-pointer w-fit mx-auto  py-1 px-2 rounded-xl flex gap-1 items-center pt-2"
           >
             <div>
               <lord-icon
@@ -116,7 +137,7 @@ const Manager = () => {
                 trigger="hover"
               ></lord-icon>
             </div>
-            Add Password
+            Save Password
           </button>
         </div>
         <div className="passwords">
@@ -131,19 +152,20 @@ const Manager = () => {
                   <th className="py-2">Website</th>
                   <th className="py-2">Username</th>
                   <th className="py-2">Password</th>
+                  <th className="py-2">Actions</th>
                 </tr>
               </thead>
               <tbody className="text-black bg-white">
                 {passwordArray.map((item, index) => {
                   return (
                     <tr key={index}>
-                      <td className=" cursor-pointer hover:bg-blue-200 text-center w-32 border border-slate-100 py-2">
+                      <td className=" cursor-pointer hover:bg-blue-200 text-center w-32 border border-slate-100 py-1">
                         <a href={item.site} target="_blank">
                           {item.site}
                         </a>
                       </td>
                       <td
-                        className="cursor-pointer hover:bg-blue-200 text-center w-32 border border-slate-100 py-2"
+                        className="cursor-pointer hover:bg-blue-200 text-center w-32 border border-slate-100 py-1"
                         onClick={() => {
                           copyText(item.username);
                         }}
@@ -151,12 +173,42 @@ const Manager = () => {
                         {item.username}
                       </td>
                       <td
-                        className="cursor-pointer hover:bg-blue-200 text-center w-32 border border-slate-100 py-2"
+                        className="cursor-pointer hover:bg-blue-200 text-center w-32 border border-slate-100 py-1"
                         onClick={() => {
                           copyText(item.password);
                         }}
                       >
                         {item.password}
+                      </td>
+                      <td className="text-center w-32 border border-slate-100 py-1">
+                        <span
+                          onClick={() => {
+                            editPassword(item.id);
+                          }}
+                        >
+                          <lord-icon
+                            className="mx-2 cursor-pointer"
+                            src="https://cdn.lordicon.com/exymduqj.json"
+                            trigger="hover"
+                            stroke="bold"
+                            colors="primary:#121331,secondary:#3080e8"
+                            style={{ width: "25px", height: "25px" }}
+                          ></lord-icon>
+                        </span>
+                        <span
+                          onClick={() => {
+                            deletePassword(item.id);
+                          }}
+                        >
+                          <lord-icon
+                            className="mx-2 cursor-pointer"
+                            src="https://cdn.lordicon.com/jzinekkv.json"
+                            trigger="hover"
+                            stroke="bold"
+                            colors="primary:#121331,secondary:#3080e8"
+                            style={{ width: "25px", height: "25px" }}
+                          ></lord-icon>
+                        </span>
                       </td>
                     </tr>
                   );
