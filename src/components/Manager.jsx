@@ -28,13 +28,49 @@ const Manager = () => {
   }, []);
 
   const savePassword = async () => {
-    setpasswordArray([...passwordArray, {...form, id: uuidv4()}]);
-    localStorage.setItem(
-      "passwords",
-      JSON.stringify([...passwordArray, { ...form, id: uuidv4() }])
-    );
-    console.log([...passwordArray, form]);
-    setform({ site: "", username: "", password: "" });
+    if(form.site.length >= 0 && form.username.length >=0 && form.password.length >= 0){
+
+      setpasswordArray([...passwordArray, {...form, id: uuidv4()}]);
+      localStorage.setItem(
+        "passwords",
+        JSON.stringify([...passwordArray, { ...form, id: uuidv4() }])
+      );
+      console.log([...passwordArray, form]);
+      setform({ site: "", username: "", password: "" });
+      toast("🦄 Password Saved!", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }else if(form.site.length === 0 && form.username.length === 0 && form.password.length === 0){
+      toast("🦄 Nothing to Save!", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+    else{
+      toast("🦄 Password Not Saved!", {
+        position: "top-right",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: false,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
   };
 
   const deletePassword = async (id) => {
@@ -46,6 +82,16 @@ const Manager = () => {
         JSON.stringify(passwordArray.filter((item) => item.id !== id))
       );
     }
+    toast("Password Deleted", {
+      position: "top-right",
+      autoClose: 4000,
+      hideProgressBar: false,
+      closeOnClick: true,
+      pauseOnHover: false,
+      draggable: true,
+      progress: undefined,
+      theme: "dark",
+    });
   };
 
   const editPassword = async (id) => {
@@ -60,7 +106,7 @@ const Manager = () => {
   const copyText = (text) => {
     toast("🦄 Copied to Clipboard!", {
       position: "top-right",
-      autoClose: 2000,
+      autoClose: 4000,
       hideProgressBar: false,
       closeOnClick: true,
       pauseOnHover: false,
@@ -85,9 +131,9 @@ const Manager = () => {
         pauseOnHover
         theme="dark"
       />
-      <div className="absolute top-0 z-[-2] h-screen w-screen bg-neutral-950 bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(120,119,198,0.3),rgba(255,255,255,0))]"></div>
+      <div className="absolute top-0 z-[-2] h-full w-full"></div>
 
-      <div className="container my-8 mx-auto  max-w-4xl">
+      <div className="container my-8 mx-auto  max-w-4xl min-h-[84vh]">
         <h1 className="text-center text-2xl text-white">
           Your Password Manager
         </h1>
@@ -99,8 +145,9 @@ const Manager = () => {
             placeholder="Website"
             type="text"
             name="site"
+            id="site"
           />
-          <div className="relative flex w-full justify-between gap-5 max-w-full py-8">
+          <div className="relative flex flex-col md:flex-row w-full justify-between gap-5 max-w-full py-8">
             <input
               value={form.username}
               onChange={handleChange}
@@ -108,6 +155,7 @@ const Manager = () => {
               placeholder="Username"
               type="text"
               name="username"
+              id="username"
             />
             <input
               ref={passwordRef}
@@ -117,6 +165,7 @@ const Manager = () => {
               placeholder="Password"
               type="password"
               name="password"
+              id="password"
             />
             <img
               ref={ref}
